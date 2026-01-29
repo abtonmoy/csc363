@@ -1,0 +1,2 @@
+[Token type: TokenType.ASSIGN; lexeme: =]
+[Token type: TokenType.EOF; lexeme: ]

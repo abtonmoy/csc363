@@ -10,6 +10,7 @@ class Tokenizer:
 
     def __init__(self, cs: CharStream):
         self.cs = cs
+        # added: line and column tracking for error messages
         self.line = 1
         self.column = 0
 
@@ -27,9 +28,11 @@ class Tokenizer:
     def nexttoken(self) -> Token:
 
         char = self.cs.read()
+        # added: column tracking
         self.column += 1
 
         while char in {' ', '\n', '\r', '\t'}:
+            # added: line tracking for newlines
             if char == '\n':
                 self.line += 1
                 self.column = 0
@@ -40,7 +43,7 @@ class Tokenizer:
         if char == '':
             return Token(TokenType.EOF, lexeme = f"{char}")
 
-        # Track position before token
+        # added: track token position for error messages
         start_line = self.line
         start_column = self.column
 
@@ -50,56 +53,70 @@ class Tokenizer:
                 return Token(TokenType.ASSIGN, lexeme = f"{char}")
             
             case '(':
+                # modified: replaced NotImplementedError
                 return Token(TokenType.LPAREN, lexeme = f"{char}")
                 
             case ')': 
+                # modified: replaced NotImplementedError
                 return Token(TokenType.RPAREN, lexeme = f"{char}")
             
             case '+':
+                # modified: replaced NotImplementedError
                 return Token(TokenType.PLUS, lexeme = f"{char}")
             
             case '-':
+                # modified: replaced NotImplementedError
                 return Token(TokenType.MINUS, lexeme = f"{char}")
             
             case '*':
+                # modified: replaced NotImplementedError
                 return Token(TokenType.TIMES, lexeme = f"{char}")
             
             case '/':
+                # modified: replaced NotImplementedError
                 return Token(TokenType.DIVIDE, lexeme = f"{char}")
             
             case '^':
+                # modified: replaced NotImplementedError
                 return Token(TokenType.EXPONENT, lexeme = f"{char}")
             
             case 'i':
+                # modified: replaced NotImplementedError
                 return Token(TokenType.INTDEC, lexeme = f"{char}")
             
             case 'p':
+                # modified: replaced NotImplementedError
                 return Token(TokenType.PRINT, lexeme = f"{char}")
             
             case _:
                 pass # Move on to secondary inspection to handle digits, vars, error case
 
         if char.isdigit():
+            # modified: changed to return directly from method with position params
             return self.readintliteral(char, start_line, start_column)
 
 
         if char.isalpha():
             if char not in VALID_VARS:
+                # modified: added position to error message
                 raise ValueError(f"Invalid variable character: {char} at line {start_line}, column {start_column}")
             else:
+                # modified: replaced NotImplementedError with method call
                 return self.readvariable(char, start_line, start_column)
-           
+            
+        # modified: added position to error message
         raise ValueError(f"Unexpected character: {char!r} at line {start_line}, column {start_column}")
 
+    # modified: updated signature and implementation
     def readintliteral(self, firstchar: str, line: int, column: int) -> Token:
         digits: list[str] = []
         digits.append(firstchar)
         
-        # Handle leading zero validation (only allow single '0', not multi-digit with leading zero)
+        # added: leading zero validation
         if firstchar == '0' and not self.cs.eof() and self.cs.peek().isdigit():
             raise ValueError(f"Integer literal cannot have leading zeros at line {line}, column {column}")
 
-        # Read all consecutive digits
+        # added: read all consecutive digits
         while not self.cs.eof() and self.cs.peek().isdigit():
             digits.append(self.cs.read())
             self.column += 1
@@ -109,6 +126,7 @@ class Tokenizer:
 
         return Token(TokenType.INTLIT, lexeme=lexeme, intvalue=intvalue)
     
+    # added: new method for variable parsing
     def readvariable(self, firstchar: str, line: int, column: int) -> Token:
         chars: list[str] = []
         chars.append(firstchar)
