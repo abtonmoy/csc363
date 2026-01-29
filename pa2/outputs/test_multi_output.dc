@@ -1,0 +1,6 @@
+[Token type: TokenType.VARREF; lexeme: x; name: x]
+[Token type: TokenType.ASSIGN; lexeme: =]
+[Token type: TokenType.INTLIT; lexeme: 123; intval: 123]
+[Token type: TokenType.PLUS; lexeme: +]
+[Token type: TokenType.INTLIT; lexeme: 456; intval: 456]
+[Token type: TokenType.EOF; lexeme: ]
