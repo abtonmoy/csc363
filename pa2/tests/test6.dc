@@ -1,0 +1,3 @@
+[Token type: TokenType.INTLIT; lexeme: 0; intval: 0]
+[Token type: TokenType.INTLIT; lexeme: 0; intval: 0]
+[Token type: TokenType.EOF; lexeme: ]
