@@ -1,0 +1,16 @@
+i a
+i b
+i u
+i v
+i w
+
+a = 6
+b = 2
+
+u = 2 * a + 3 * b
+v = (a - b) * (a - b)
+w = u + v
+
+p u
+p v
+p w

@@ -1,0 +1,14 @@
+i x
+i y
+i term1
+i term2
+i e
+
+x = 5
+y = 3
+
+term1 = (x + y) * (x + y)
+term2 = x * x + 2 * x * y + y * y
+e = term1 - term2
+
+p e
