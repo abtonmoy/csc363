@@ -1,2 +1,0 @@
-Assign(varname='a')
-   └─ VarRef(varname='b')
