@@ -84,8 +84,11 @@ def parse_expression(ts: TokenStream) -> ASTNode:
             tok = ts.read()
             if tok.intvalue is None:
                 raise ParseError("Malformed INTLIT token")
-            valstack.append(IntLitNode(tok.intvalue))
-            continue
+            next = ts.peek()
+            if (next.tokentype in operatortypes) or (next.tokentype == TokenType.RPAREN) or (next.tokentype == TokenType.EOF):
+                valstack.append(IntLitNode(tok.intvalue))
+                continue
+            raise ParseError("Expected operator or rparen after int literal")
 
         if tok.tokentype == TokenType.VARREF:
             raise NotImplementedError
