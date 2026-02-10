@@ -3,7 +3,7 @@ from tokens import Token, TokenType
 from tokenstream import TokenStream
 import string
 
-RESERVED = {'i', 'f', 'o', 'n', 'p'}
+RESERVED = {'i', 'f', 'o', 'n', 'p', 'l', 's'}
 VALID_VARS = set(string.ascii_lowercase) - RESERVED
 
 class Tokenizer:
