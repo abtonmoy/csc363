@@ -1,1 +1,12 @@
-ERROR: NotImplementedError: 
+[Token type: TokenType.INTDEC; lexeme: ia; name: a]
+[Token type: TokenType.INTDEC; lexeme: ib; name: b]
+[Token type: TokenType.VARREF; lexeme: a]
+[Token type: TokenType.ASSIGN; lexeme: =]
+[Token type: TokenType.INTLIT; lexeme: 6; intval: 6]
+[Token type: TokenType.VARREF; lexeme: b]
+[Token type: TokenType.ASSIGN; lexeme: =]
+[Token type: TokenType.VARREF; lexeme: a]
+[Token type: TokenType.PLUS; lexeme: +]
+[Token type: TokenType.INTLIT; lexeme: 7; intval: 7]
+[Token type: TokenType.PRINT; lexeme: pb; name: b]
+[Token type: TokenType.EOF; lexeme: ]

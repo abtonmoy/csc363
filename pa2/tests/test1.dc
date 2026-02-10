@@ -1,1 +1,7 @@
-ERROR: NotImplementedError: 
+[Token type: TokenType.ASSIGN; lexeme: =]
+[Token type: TokenType.PLUS; lexeme: +]
+[Token type: TokenType.MINUS; lexeme: -]
+[Token type: TokenType.TIMES; lexeme: *]
+[Token type: TokenType.DIVIDE; lexeme: /]
+[Token type: TokenType.EXPONENT; lexeme: ^]
+[Token type: TokenType.EOF; lexeme: ]

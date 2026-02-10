@@ -1,1 +1,5 @@
-ERROR: NotImplementedError: 
+[Token type: TokenType.INTDEC; lexeme: ia; name: a]
+[Token type: TokenType.INTDEC; lexeme: ib; name: b]
+[Token type: TokenType.PRINT; lexeme: pa; name: a]
+[Token type: TokenType.PRINT; lexeme: pb; name: b]
+[Token type: TokenType.EOF; lexeme: ]

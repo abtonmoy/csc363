@@ -1,0 +1,5 @@
+[Token type: TokenType.INTDEC; lexeme: i]
+[Token type: TokenType.VARREF; lexeme: x; name: x]
+[Token type: TokenType.PRINT; lexeme: p]
+[Token type: TokenType.VARREF; lexeme: y; name: y]
+[Token type: TokenType.EOF; lexeme: ]
