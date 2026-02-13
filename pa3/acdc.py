@@ -23,7 +23,9 @@ tokenstreams = []
 #We will append ASTs to this list, one per line of source
 
 
-outputfile = open(sys.argv[2], 'w')
+outputfile = open(sys.argv[2], 'w') # Unix Version
+#outputfile = open(sys.argv[2], 'w', encoding="utf-8") # Windows version for PA3 and PA4
+# This will not be necessary for PA5 and beyond because we won't need the the prettyprint function
 
 for linenumber, line in enumerate(inputlines, start=1):
     if line.strip() == '':
