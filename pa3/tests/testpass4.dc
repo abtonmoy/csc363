@@ -1,0 +1,6 @@
+Assign(varname='a')
+   └─ BinOp(op=PLUS)
+      ├─ BinOp(op=TIMES)
+      │  ├─ IntLit(value=6)
+      │  └─ VarRef(varname='b')
+      └─ IntLit(value=7)

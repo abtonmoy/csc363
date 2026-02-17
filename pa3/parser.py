@@ -16,7 +16,7 @@ def parse(ts: TokenStream) -> ASTNode:
     #print(f"parse() peeked: {t}")
 
     if t.tokentype == TokenType.PRINT:
-        ts.read()  # consume PRINT
+        ts.read()
         if t.name is None:
             raise ParseError("Malformed PRINT token")
         node = PrintNode(t.name)
@@ -24,7 +24,7 @@ def parse(ts: TokenStream) -> ASTNode:
         return node
 
     if t.tokentype == TokenType.INTDEC:
-        ts.read()  # consume INTDEC
+        ts.read()
         if t.name is None:
             raise ParseError("Malformed INTDEC token")
         node = IntDclNode(t.name)
@@ -32,7 +32,7 @@ def parse(ts: TokenStream) -> ASTNode:
         return node
 
     if t.tokentype == TokenType.VARREF:
-        lhs = ts.read()  # consume VARREF
+        lhs = ts.read()
         expect(ts, TokenType.ASSIGN)
         rhs = parse_expression(ts)
         if lhs.lexeme is None:
@@ -49,8 +49,8 @@ def parse(ts: TokenStream) -> ASTNode:
 def parse_expression(ts: TokenStream) -> ASTNode:
     """Parse an infix arithmetic expression using shunting-yard, producing an AST."""
 
-    opstack = []   # stack of operator Tokens (and LPAREN)
-    valstack = []  # stack of ASTNodes
+    opstack = []   
+    valstack = []
 
     precedence = {
         TokenType.EXPONENT: 3,
@@ -76,6 +76,8 @@ def parse_expression(ts: TokenStream) -> ASTNode:
         TokenType.DIVIDE,
         TokenType.EXPONENT,
     }
+    
+    valid_followers = {TokenType.INTLIT, TokenType.VARREF, TokenType.LPAREN}
 
     while ts.peek().tokentype != TokenType.EOF:
         tok = ts.peek()
@@ -84,33 +86,51 @@ def parse_expression(ts: TokenStream) -> ASTNode:
             tok = ts.read()
             if tok.intvalue is None:
                 raise ParseError("Malformed INTLIT token")
-            next = ts.peek()
-            if (next.tokentype in operatortypes) or (next.tokentype == TokenType.RPAREN) or (next.tokentype == TokenType.EOF):
+            next_tok = ts.peek()
+            if (next_tok.tokentype in operatortypes) or (next_tok.tokentype == TokenType.RPAREN) or (next_tok.tokentype == TokenType.EOF):
                 valstack.append(IntLitNode(tok.intvalue))
                 continue
             raise ParseError("Expected operator or rparen after int literal")
 
         if tok.tokentype == TokenType.VARREF:
-            raise NotImplementedError
+            tok = ts.read()
+            if tok.name is None:
+                raise ParseError("Malformed VARREF token")
+            next_tok = ts.peek()
+            if (next_tok.tokentype in operatortypes) or (next_tok.tokentype == TokenType.RPAREN) or (next_tok.tokentype == TokenType.EOF):
+                valstack.append(VarRefNode(tok.name))
+                continue
+            raise ParseError("Expected operator or rparen after variable")
 
         if tok.tokentype == TokenType.LPAREN:
-            # Push tok to operator stack and continue
-            raise NotImplementedError
+            ts.read()
+            next_tok = ts.peek()
+            if next_tok.tokentype not in valid_followers:
+                raise ParseError("Expected lparen, intlit, or varref after lparen")
+            opstack.append(tok)
+            continue
 
         if tok.tokentype == TokenType.RPAREN:
-            ts.read()  # consume RPAREN
-            # reduce until matching LPAREN
-            while True:
-                if len(opstack) == 0:
-                    raise ParseError("Mismatched parentheses")
-                if opstack[-1].tokentype == TokenType.LPAREN:
-                    opstack.pop()  # discard LPAREN
+            ts.read()
+            found_lparen = False
+            while len(opstack) > 0:
+                top = opstack[-1]
+                if top.tokentype == TokenType.LPAREN:
+                    opstack.pop()
+                    found_lparen = True
                     break
                 reduce(opstack, valstack)
+            
+            if not found_lparen:
+                 raise ParseError("Mismatched parentheses")
             continue
 
         if tok.tokentype in operatortypes:
-            incoming = ts.read()  # consume operator
+            incoming = ts.read()
+            
+            next_tok = ts.peek()
+            if next_tok.tokentype not in valid_followers:
+                 raise ParseError("Expected operand or lparen after operator")
 
             while len(opstack) > 0 and opstack[-1].tokentype in operatortypes:
                 top = opstack[-1]
@@ -118,23 +138,23 @@ def parse_expression(ts: TokenStream) -> ASTNode:
                 top_prec = precedence[top.tokentype]
                 inc_prec = precedence[incoming.tokentype]
 
-                # if CHECK OPERATOR PRECDENCE and ASSOCIATIVITY:
-                #   reduce(opstack, valstack)
-                # else
-                #    break
-
+                is_left = leftassoc[incoming.tokentype]
+                if (is_left and top_prec >= inc_prec) or (not is_left and top_prec > inc_prec):
+                     reduce(opstack, valstack)
+                else:
+                    break
 
             opstack.append(incoming)
             continue
 
         raise ParseError(f"Unexpected token in expression: {tok}")
 
-    # consume remaining operators
     while len(opstack) > 0:
-        # Check to see if last element on opstack is LPAREN
-        # If so, we have an issue, raise error
-        # Otherwise, we can reduce
-        raise NotImplementedError
+        top = opstack[-1]
+        if top.tokentype == TokenType.LPAREN:
+            raise ParseError("Mismatched parentheses")
+        
+        reduce(opstack, valstack)
 
     if len(valstack) != 1:
         raise ParseError("Expression did not reduce to one AST")
@@ -142,25 +162,26 @@ def parse_expression(ts: TokenStream) -> ASTNode:
     return valstack.pop()
 
 
-
-
-
 def reduce(opstack: list, valstack: list) -> None:
     """Pop one operator and two operands to build a BinOpNode and push it back."""
-    # Check to make sure there actually is something to pop from each stack 
-    # If not, raise error
-    # If so, pop two from valstack as rhs and lhs
-    # And pop operator from opstack
-    # Then combine them to produce a new AST node
-    # Finally, push back onto valstack
+    if len(opstack) < 1:
+        raise ParseError("Internal error: reduce called with empty opstack")
+    
+    op_token = opstack.pop()
+    
+    if len(valstack) < 2:
+        raise ParseError(f"Expected two operands for operator {op_token.tokentype}")
+
+    right = valstack.pop()
+    left = valstack.pop()
+
+    node = BinOpNode(op_token.tokentype, left, right)
+    valstack.append(node)
 
 
 def expect(ts: TokenStream, expectedtype: TokenType) -> Token:
-    # Peek at next token
-    # If type of that next token is the same as expected, consume the token
-    # using ts.read() or ts.advance()
-    # Return the token
-    # Otherwise, raise error
     tok = ts.peek()
-    # Put stuff here
-    return tok
+    if tok.tokentype == expectedtype:
+        return ts.read()
+    
+    raise ParseError(f"Expected {expectedtype} but found {tok.tokentype}")

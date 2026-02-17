@@ -23,7 +23,7 @@ tokenstreams = []
 #We will append ASTs to this list, one per line of source
 
 
-outputfile = open(sys.argv[2], 'w')
+outputfile = open(sys.argv[2], 'w', encoding='utf-8')
 
 for linenumber, line in enumerate(inputlines, start=1):
     if line.strip() == '':
