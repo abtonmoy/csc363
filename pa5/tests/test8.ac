@@ -1,0 +1,11 @@
+ia
+ib
+ic
+id
+ie
+a = 2
+b = 3
+c = 2
+d = (a + b)^c
+e = d - (a^c + b^c)
+pe

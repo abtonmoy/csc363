@@ -1,0 +1,9 @@
+ia
+ib
+ic
+id
+a = 4
+b = 2
+c = a^b
+d = c + a*b
+pd
