@@ -37,13 +37,12 @@ def stmtcodegen(statement: ASTNode) -> InstructionList:
     code = InstructionList()
 
     if isinstance(statement, IntDclNode):
-
-        raise NotImplementedError
+        return code
 
 
     if isinstance(statement, IntLitNode):
-
-        raise NotImplementedError
+        code.append(str(statement, IntLitNode))
+        return code
 
 
     if isinstance(statement, VarRefNode):
