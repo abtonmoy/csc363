@@ -1,0 +1,8 @@
+ia
+ib
+a=1
+b=2
+a=a+b
+b=b+a
+pa
+pb

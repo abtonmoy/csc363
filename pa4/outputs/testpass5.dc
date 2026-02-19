@@ -1,0 +1,8 @@
+IntDcl(varname='a')
+Assign(varname='a')
+   └─ BinOp(op=EXPONENT)
+      ├─ IntLit(value=2)
+      └─ BinOp(op=PLUS)
+         ├─ IntLit(value=3)
+         └─ IntLit(value=1)
+Print(varname='a')

@@ -1,0 +1,8 @@
+IntDcl(varname='a')
+Assign(varname='a')
+   └─ IntLit(value=1)
+Assign(varname='a')
+   └─ BinOp(op=PLUS)
+      ├─ VarRef(varname='a')
+      └─ IntLit(value=1)
+Print(varname='a')

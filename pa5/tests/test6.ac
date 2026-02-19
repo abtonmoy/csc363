@@ -1,0 +1,10 @@
+ia
+ib
+ic
+id
+a = 5
+b = 2
+c = a^b
+b = b + 1
+d = c + a^b
+pd
