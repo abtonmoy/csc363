@@ -1,0 +1,4 @@
+IntDcl(varname='a')
+Assign(varname='a')
+   └─ IntLit(value=0)
+Print(varname='a')
