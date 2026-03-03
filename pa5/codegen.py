@@ -41,28 +41,46 @@ def stmtcodegen(statement: ASTNode) -> InstructionList:
 
 
     if isinstance(statement, IntLitNode):
-        code.append(str(statement, IntLitNode))
+        code.append(str(statement.value))
         return code
 
 
     if isinstance(statement, VarRefNode):
-
-        raise NotImplementedError
+        code.append(f"l{statement.varname}")
+        return code
     
     if isinstance(statement, PrintNode):
-
-        raise NotImplementedError
-
+        code.append(f"l{statement.varname}")
+        code.append("p")
+        return code
+    
     
     if isinstance(statement, AssignNode):
-
-        raise NotImplementedError
+        expr_code = stmtcodegen(statement.expr)
+        code.extend(expr_code)
+        code.append(f"s{statement.varname}")
+        return code
     
-
+    
     if isinstance(statement, BinOpNode):
-
-        raise NotImplementedError
+        left_code = stmtcodegen(statement.left)
+        right_code = stmtcodegen(statement.right)
+        
+        code.extend(left_code)
+        code.extend(right_code)
+        
+        if statement.optype == TokenType.PLUS:
+            code.append("+")
+        elif statement.optype == TokenType.MINUS:
+            code.append("-")
+        elif statement.optype == TokenType.TIMES:
+            code.append("*")
+        elif statement.optype == TokenType.DIVIDE:
+            code.append("/")
+        elif statement.optype == TokenType.EXPONENT:
+            code.append("^")
+        
+        return code
     
-
     # Should never get here
     return code
