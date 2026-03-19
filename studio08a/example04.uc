@@ -5,6 +5,8 @@ int main()
 {
     int a;
     int b;
+    read(a);
+    read(b);
 
     if (a > b)
     {
