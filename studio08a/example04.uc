@@ -12,6 +12,10 @@ int main()
     {
         print(true);
     }
+    else
+    {
+        print(false);
+    }
     
     return 0;
 }
