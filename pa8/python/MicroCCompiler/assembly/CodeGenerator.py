@@ -40,6 +40,15 @@ class CodeGenerator(AbstractASTVisitor):
 
     co = CodeObject()
 
+    temp = self.generateTemp(Scope.Type.INT)
+    val = node.getVal()
+    # LI t2, 5
+    co.code.append(Li(temp, val))
+    co.temp = temp
+    co.lval = False
+    co.type = node.getType()
+
+
     return co
 
 
@@ -61,8 +70,28 @@ class CodeGenerator(AbstractASTVisitor):
 
 
   def postprocessUnaryOpNode(self, node: UnaryOpNode, expr: CodeObject) -> CodeObject:
+    '''
+    Unary Op Node would be telling us to do -(expr)
+    '''
 
     co = CodeObject()  # Step 0
+
+    exprcode = expr.code # Add in all the code required to get expr
+    
+    if expr.lval:
+      
+
+
+    if expr.type == Scope.Type.INT:
+      temp = self.generateTemp(Scope.Type.INT)
+      co.code.append(Neg(src=expr.temp, dest=temp))
+      
+
+    elif expr.type == Scope.Type.FLOAT:
+
+    else:
+      raise Exception("Non int/float in unary op!")
+
 
     return co
   
