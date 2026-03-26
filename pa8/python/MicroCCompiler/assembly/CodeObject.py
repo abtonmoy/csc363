@@ -13,8 +13,8 @@ class CodeObject:
     else:
       self.type = None
     self.code = InstructionList()
-    self.temp = None
-    self.lval = None
+    self.temp: str | None = None
+    self.lval: bool | None = None
 
   def __str__(self):
     sb = ";Current temp: " + (self.temp if self.temp is not None else "")  +  "\n" + ";IR Code: \n" + str(self.code)
