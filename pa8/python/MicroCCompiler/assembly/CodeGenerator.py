@@ -182,7 +182,14 @@ class CodeGenerator(AbstractASTVisitor):
 
 
 
-  def generateAddrFromVariable(self, lco: CodeObject) -> CodeObject:
+  def generateAddrFromVariable(self, lco: CodeObject) -> InstructionList:
+    '''
+    Changed to return InstructionList instead of CodeObject, for future compatibility reasons.
+    This function is responsible for generating the instruction or instructions to load a variable from 
+    memory and put it into a temporary register.  For now, it will handle only global variables.
+    Later, we'll modify to handle local variables.
+    '''
+    
 
     assert(lco.isVar() is True)
 
@@ -192,7 +199,7 @@ class CodeGenerator(AbstractASTVisitor):
     address = str(symbol.getAddress())
     
     # LA temp, address
-    loadinstruction = 
+    #loadinstruction = 
 
 
 
