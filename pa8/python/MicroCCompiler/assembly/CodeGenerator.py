@@ -85,9 +85,13 @@ class CodeGenerator(AbstractASTVisitor):
     if expr.type == Scope.Type.INT:
       temp = self.generateTemp(Scope.Type.INT)
       co.code.append(Neg(src=expr.temp, dest=temp))
+      # SUB temp, x0, expr.temp
+      # SUB temp, zero, expr.temp 
       
 
     elif expr.type == Scope.Type.FLOAT:
+      temp = self.generateTemp(Scope.Type.FLOAT)
+      co.code.append(FNeg(src=expr.temp, dest=temp))
 
     else:
       raise Exception("Non int/float in unary op!")
@@ -161,6 +165,14 @@ class CodeGenerator(AbstractASTVisitor):
 
   def rvalify(self, lco : CodeObject) -> CodeObject:
 
+    assert(lco.lval is True)
+    assert(lco.isVar() is True)
+
+    
+
+
+
+
     co = CodeObject()
 
     return co
@@ -172,7 +184,17 @@ class CodeGenerator(AbstractASTVisitor):
 
   def generateAddrFromVariable(self, lco: CodeObject) -> CodeObject:
 
+    assert(lco.isVar() is True)
+
     co = CodeObject()
+
+    symbol = lco.getSTE()
+    address = str(symbol.getAddress())
+    
+    # LA temp, address
+    loadinstruction = 
+
+
 
 
     return co
