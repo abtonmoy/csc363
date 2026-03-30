@@ -53,7 +53,10 @@ class CodeGenerator(AbstractASTVisitor):
 
 
   def postprocessFloatLitNode(self, node: FloatLitNode) -> CodeObject:
-
+    '''
+    This will look a lot like the int literal node above
+    Minor difference: use FImm instead of Li
+    '''
     co = CodeObject()
 
     return co
@@ -146,6 +149,23 @@ class CodeGenerator(AbstractASTVisitor):
 
     co = CodeObject()
 
+    assert(var.isVar())
+
+    if var.type is Scope.Type.INT:
+      temp = self.generateTemp(Scope.Type.INT)
+      co.code.append(GetI(temp))
+      address = self.generateAddrFromVariable(var)
+      temp2 = self.generateTemp(Scope.Type.INT)
+      co.code.append(La(temp2, address))
+      co.code.append(Sw(temp, temp2, '0'))
+
+    elif var.type is Scope.Type.FLOAT:
+      # put stuff here
+      pass
+
+    else:
+      raise Exception("Bad type in read node")
+
 
     return co
 
@@ -161,7 +181,12 @@ class CodeGenerator(AbstractASTVisitor):
 
     co = CodeObject()
 
+    if retExpr.lval is True:
+      retExpr = self.rvalify(retExpr)
 
+    co.code.extend(retExpr.code)
+    co.code.append(Halt())
+    co.type = None
     return co
 
 
@@ -188,18 +213,17 @@ class CodeGenerator(AbstractASTVisitor):
     
     co = CodeObject()
 
-    symbol = lco.getSTE()
     address = self.generateAddrFromVariable(lco)
     temp1 = self.generateTemp(Scope.Type.INT) # Addresses are always ints
-    co.code.append(La(temp1, address)) # Load address
+    co.code.append(La(temp1, address)) # Load address (global only)
 
     if lco.type is Scope.Type.INT:
       temp2 = self.generateTemp(Scope.Type.INT)
-      co.code.append(Lw(temp2, address, '0'))
+      co.code.append(Lw(temp2, temp1, '0'))
 
     elif lco.type is Scope.Type.FLOAT:
       temp2 = self.generateTemp(Scope.Type.FLOAT)
-      co.code.append(Flw(temp2, address, '0'))
+      co.code.append(Flw(temp2, temp1, '0'))
 
     else:
       raise Exception("Bad type in rvalify!")
@@ -226,8 +250,6 @@ class CodeGenerator(AbstractASTVisitor):
     '''
 
     assert(lco.isVar() is True)
-
-    il = InstructionList()  # Make new instruction list
 
     symbol = lco.getSTE()   # Get symbol from symbol table
     address = str(symbol.getAddress()) # Get address of variable
