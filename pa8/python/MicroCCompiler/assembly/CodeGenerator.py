@@ -59,6 +59,13 @@ class CodeGenerator(AbstractASTVisitor):
     '''
     co = CodeObject()
 
+    temp = self.generateTemp(Scope.Type.FLOAT)
+    val = node.getVal()
+    co.code.append(FImm(temp, val))
+    co.temp = temp
+    co.lval = False
+    co.type = node.getType()
+
     return co
 
 
@@ -77,6 +84,48 @@ class CodeGenerator(AbstractASTVisitor):
 
     co = CodeObject()
 
+    if left.lval:
+      left = self.rvalify(left)
+    co.code.extend(left.code)
+
+    if right.lval:
+      right = self.rvalify(right)
+    co.code.extend(right.code)
+
+    op = node.getOp()
+    resultType = left.type
+
+    if resultType == Scope.Type.INT:
+      temp = self.generateTemp(Scope.Type.INT)
+      if op == BinaryOpNode.OpType.ADD:
+        co.code.append(Add(left.temp, right.temp, temp))
+      elif op == BinaryOpNode.OpType.SUB:
+        co.code.append(Sub(left.temp, right.temp, temp))
+      elif op == BinaryOpNode.OpType.MUL:
+        co.code.append(Mul(left.temp, right.temp, temp))
+      elif op == BinaryOpNode.OpType.DIV:
+        co.code.append(Div(left.temp, right.temp, temp))
+      else:
+        raise Exception("Unknown binary op for INT")
+    elif resultType == Scope.Type.FLOAT:
+      temp = self.generateTemp(Scope.Type.FLOAT)
+      if op == BinaryOpNode.OpType.ADD:
+        co.code.append(FAdd(left.temp, right.temp, temp))
+      elif op == BinaryOpNode.OpType.SUB:
+        co.code.append(FSub(left.temp, right.temp, temp))
+      elif op == BinaryOpNode.OpType.MUL:
+        co.code.append(FMul(left.temp, right.temp, temp))
+      elif op == BinaryOpNode.OpType.DIV:
+        co.code.append(FDiv(left.temp, right.temp, temp))
+      else:
+        raise Exception("Unknown binary op for FLOAT")
+    else:
+      raise Exception("Bad type in binary op node")
+
+    # Step 6: update code object fields
+    co.temp = temp
+    co.lval = False
+    co.type = resultType
 
     return co
 
@@ -129,7 +178,23 @@ class CodeGenerator(AbstractASTVisitor):
   def postprocessAssignNode(self, node: AssignNode, left: CodeObject, right: CodeObject) -> CodeObject:
     co = CodeObject()
 
+    if right.lval:
+      right = self.rvalify(right)
+    co.code.extend(right.code)
 
+    address = self.generateAddrFromVariable(left)
+    addrTemp = self.generateTemp(Scope.Type.INT)
+    co.code.append(La(addrTemp, address))
+
+    if left.type == Scope.Type.INT:
+      co.code.append(Sw(right.temp, addrTemp, '0'))
+    elif left.type == Scope.Type.FLOAT:
+      co.code.append(Fsw(right.temp, addrTemp, '0'))
+    else:
+      raise Exception("Bad type in assign node")
+
+    co.lval = False
+    co.type = None
     return co
 
 
@@ -174,6 +239,27 @@ class CodeGenerator(AbstractASTVisitor):
 
     co = CodeObject()
 
+    if expr.type == Scope.Type.STRING:
+      # expr is an lval string variable — load its address and print it
+      address = self.generateAddrFromVariable(expr)
+      addrTemp = self.generateTemp(Scope.Type.INT)
+      co.code.append(La(addrTemp, address))
+      co.code.append(PutS(addrTemp))
+    elif expr.type == Scope.Type.INT:
+      if expr.lval:
+        expr = self.rvalify(expr)
+      co.code.extend(expr.code)
+      co.code.append(PutI(expr.temp))
+    elif expr.type == Scope.Type.FLOAT:
+      if expr.lval:
+        expr = self.rvalify(expr)
+      co.code.extend(expr.code)
+      co.code.append(PutF(expr.temp))
+    else:
+      raise Exception("Bad type in write node")
+
+    co.lval = False
+    co.type = None
     return co
 
   

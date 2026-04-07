@@ -2,7 +2,6 @@ int cur;
 string test = "Hello World\n";
 
 int main() {
-	read(cur);
-	print(cur);
+
 	return 0;
 }
