@@ -275,6 +275,10 @@ class CodeGenerator(AbstractASTVisitor):
     
     ''' 
     Copy from PA8
+    Don't use the exact same thing as in PA8...use this to get addresses
+    symbol = lco.getSTE()
+    address = symbol.addressToString()
+    Otherwise the hex addresses for globals will get mangled
     '''
     return "asdf"
   

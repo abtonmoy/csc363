@@ -171,7 +171,14 @@ class CodeGenerator(AbstractASTVisitor):
 
 
   def generateAddrFromVariable(self, lco: CodeObject) -> str:
- 
+    ''' 
+    Copy from PA8/9
+    Don't use the exact same thing as in PA8...use this to get addresses
+    symbol = lco.getSTE()
+    address = symbol.addressToString()
+    Otherwise the hex addresses for globals will get mangled
+    '''
+    return "asdf"
 
 
   def _incrnumCtrlStruct(self):
