@@ -175,6 +175,7 @@ class CodeGenerator(AbstractASTVisitor):
 
 
 
+
   def postprocessAssignNode(self, node: AssignNode, left: CodeObject, right: CodeObject) -> CodeObject:
     co = CodeObject()
 
@@ -195,6 +196,7 @@ class CodeGenerator(AbstractASTVisitor):
 
     co.lval = False
     co.type = None
+
     return co
 
 
@@ -260,6 +262,7 @@ class CodeGenerator(AbstractASTVisitor):
 
     co.lval = False
     co.type = None
+
     return co
 
   
@@ -323,9 +326,6 @@ class CodeGenerator(AbstractASTVisitor):
 
 
 
-
-
-
   def generateAddrFromVariable(self, lco: CodeObject) -> str:
     '''
     Changed type to return string.
@@ -341,4 +341,3 @@ class CodeGenerator(AbstractASTVisitor):
     address = str(symbol.getAddress()) # Get address of variable
 
     return address
-    
