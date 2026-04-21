@@ -9,6 +9,7 @@ from MicroCParser import MicroCParser
 from .Scope import Scope
 from .SymbolTable import StaticVariables, SymbolTable
 from ..ast.ASTNode import ASTNode
+from ..ast.visitor.TypeChecker import TypeChecker
 from ..assembly.CodeGenerator import CodeGenerator
 from ..assembly.CodeObject import CodeObject
 
@@ -47,7 +48,9 @@ def main(filename):
 
 
         ast = parser.getAST()
-        # Type checking here
+        # Type checking
+        tc = TypeChecker()
+        tc.run(ast)
 
         # Now back to code generation
         parser.getSymbolTable().printTable()
